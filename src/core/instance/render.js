@@ -50,6 +50,8 @@ export function initRender (vm: Component) {
   }
 }
 
+// 定义渲染相关的实例方法
+
 export function renderMixin (Vue: Class<Component>) {
   // install runtime convenience helpers
   installRenderHelpers(Vue.prototype)

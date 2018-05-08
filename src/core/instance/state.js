@@ -307,6 +307,8 @@ function createWatcher (
   return vm.$watch(expOrFn, handler, options)
 }
 
+// 定义state相关的 $data, $props, $set, $delete, $watch 实例方法
+
 export function stateMixin (Vue: Class<Component>) {
   // flow somehow has problems with directly declared definition object
   // when using Object.defineProperty, so we have to procedurally build up
