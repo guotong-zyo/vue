@@ -16,9 +16,11 @@ export function initMixin (Vue: Class<Component>) {
   Vue.prototype._init = function (options?: Object) {
     const vm: Component = this
     // a uid
+    // vue实例的ID
     vm._uid = uid++
 
     let startTag, endTag
+    // istanbul 一款检查JS代码覆盖率的工具
     /* istanbul ignore if */
     if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
       startTag = `vue-perf-start:${vm._uid}`
@@ -33,9 +35,12 @@ export function initMixin (Vue: Class<Component>) {
       // optimize internal component instantiation
       // since dynamic options merging is pretty slow, and none of the
       // internal component options needs special treatment.
+      // 优化内部组件的实例化速度，因为动态选项合并是很慢的
       initInternalComponent(vm, options)
     } else {
+      // 合并选项
       vm.$options = mergeOptions(
+        //   获取到Vue的全局options
         resolveConstructorOptions(vm.constructor),
         options || {},
         vm
@@ -47,6 +52,10 @@ export function initMixin (Vue: Class<Component>) {
     } else {
       vm._renderProxy = vm
     }
+    /**
+     * 这里可以看到，在创建要一个vue 实例的时候，的基本流程
+     * 以及生命周期钩子函数，执行的顺序
+     * */
     // expose real self
     vm._self = vm
     initLifecycle(vm)
@@ -57,14 +66,13 @@ export function initMixin (Vue: Class<Component>) {
     initState(vm)
     initProvide(vm) // resolve provide after data/props
     callHook(vm, 'created')
-
     /* istanbul ignore if */
     if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
       vm._name = formatComponentName(vm, false)
       mark(endTag)
       measure(`vue ${vm._name} init`, startTag, endTag)
     }
-
+    // 挂载
     if (vm.$options.el) {
       vm.$mount(vm.$options.el)
     }
@@ -92,6 +100,7 @@ export function initInternalComponent (vm: Component, options: InternalComponent
 
 export function resolveConstructorOptions (Ctor: Class<Component>) {
   let options = Ctor.options
+  // 判断构造函数是否有父类
   if (Ctor.super) {
     const superOptions = resolveConstructorOptions(Ctor.super)
     const cachedSuperOptions = Ctor.superOptions

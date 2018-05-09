@@ -1,5 +1,6 @@
 /* @flow */
 
+// 创建一个冻结的对象
 export const emptyObject = Object.freeze({})
 
 // these helpers produces better vm code in JS engines due to their

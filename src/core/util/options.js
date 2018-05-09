@@ -374,7 +374,7 @@ export function mergeOptions (
   if (typeof child === 'function') {
     child = child.options
   }
-
+  // normalize 标准化为对象形式
   normalizeProps(child, vm)
   normalizeInject(child, vm)
   normalizeDirectives(child)
@@ -398,6 +398,11 @@ export function mergeOptions (
     }
   }
   function mergeField (key) {
+    /**
+     * 这里是合并策略
+     * 判断当前合并的选项 在strats上是否有定义，如果没有则走默认的合并策略
+     * defaultStrat = (parentVal, childVal) =>  childVal === undefined ? parentVal : childVal
+     */
     const strat = strats[key] || defaultStrat
     options[key] = strat(parent[key], child[key], vm, key)
   }

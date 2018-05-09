@@ -11,6 +11,7 @@
 
 /*  */
 
+// 创建一个冻结的对象
 var emptyObject = Object.freeze({});
 
 // these helpers produces better vm code in JS engines due to their
@@ -937,10 +938,12 @@ function copyAugment (target, src, keys) {
  * or the existing observer if the value already has one.
  */
 function observe (value, asRootData) {
+  // 判断 value 是否合法
   if (!isObject(value) || value instanceof VNode) {
     return
   }
   var ob;
+  // 判断value 是否存在__ob__ 这个属性（是否被观察过了）
   if (hasOwn(value, '__ob__') && value.__ob__ instanceof Observer) {
     ob = value.__ob__;
   } else if (
@@ -950,6 +953,7 @@ function observe (value, asRootData) {
     Object.isExtensible(value) &&
     !value._isVue
   ) {
+    // 观察数据
     ob = new Observer(value);
   }
   if (asRootData && ob) {
@@ -1453,7 +1457,7 @@ function mergeOptions (
   if (typeof child === 'function') {
     child = child.options;
   }
-
+  // normalize 标准化为对象形式
   normalizeProps(child, vm);
   normalizeInject(child, vm);
   normalizeDirectives(child);
@@ -1477,6 +1481,11 @@ function mergeOptions (
     }
   }
   function mergeField (key) {
+    /**
+     * 这里是合并策略
+     * 判断当前合并的选项 在strats上是否有定义，如果没有则走默认的合并策略
+     * defaultStrat = (parentVal, childVal) =>  childVal === undefined ? parentVal : childVal
+     */
     var strat = strats[key] || defaultStrat;
     options[key] = strat(parent[key], child[key], vm, key);
   }
@@ -4474,6 +4483,7 @@ function initRender (vm) {
   // so that we get proper render context inside it.
   // args order: tag, data, children, normalizationType, alwaysNormalize
   // internal version is used by render functions compiled from templates
+  // ._c 创建元素
   vm._c = function (a, b, c, d) { return createElement(vm, a, b, c, d, false); };
   // normalization is always applied for the public version, used in
   // user-written render functions.
@@ -4572,9 +4582,11 @@ function initMixin (Vue) {
   Vue.prototype._init = function (options) {
     var vm = this;
     // a uid
+    // vue实例的ID
     vm._uid = uid$3++;
 
     var startTag, endTag;
+    // istanbul 一款检查JS代码覆盖率的工具
     /* istanbul ignore if */
     if ("development" !== 'production' && config.performance && mark) {
       startTag = "vue-perf-start:" + (vm._uid);
@@ -4589,9 +4601,12 @@ function initMixin (Vue) {
       // optimize internal component instantiation
       // since dynamic options merging is pretty slow, and none of the
       // internal component options needs special treatment.
+      // 优化内部组件的实例化速度，因为动态选项合并是很慢的
       initInternalComponent(vm, options);
     } else {
+      // 合并选项
       vm.$options = mergeOptions(
+        //   获取到Vue的全局options
         resolveConstructorOptions(vm.constructor),
         options || {},
         vm
@@ -4601,6 +4616,10 @@ function initMixin (Vue) {
     {
       initProxy(vm);
     }
+    /**
+     * 这里可以看到，在创建要一个vue 实例的时候，的基本流程
+     * 以及生命周期钩子函数，执行的顺序
+     * */
     // expose real self
     vm._self = vm;
     initLifecycle(vm);
@@ -4611,14 +4630,13 @@ function initMixin (Vue) {
     initState(vm);
     initProvide(vm); // resolve provide after data/props
     callHook(vm, 'created');
-
     /* istanbul ignore if */
     if ("development" !== 'production' && config.performance && mark) {
       vm._name = formatComponentName(vm, false);
       mark(endTag);
       measure(("vue " + (vm._name) + " init"), startTag, endTag);
     }
-
+    // 挂载
     if (vm.$options.el) {
       vm.$mount(vm.$options.el);
     }
@@ -4646,6 +4664,7 @@ function initInternalComponent (vm, options) {
 
 function resolveConstructorOptions (Ctor) {
   var options = Ctor.options;
+  // 判断构造函数是否有父类
   if (Ctor.super) {
     var superOptions = resolveConstructorOptions(Ctor.super);
     var cachedSuperOptions = Ctor.superOptions;
@@ -10928,3 +10947,4 @@ Vue.compile = compileToFunctions;
 return Vue;
 
 })));
+//# sourceMappingURL=vue.js.map
