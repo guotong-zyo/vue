@@ -58,6 +58,8 @@ export function createCompileToFunctionFn (compile: Function): Function {
     // compile
     const compiled = compile(template, options)
 
+    console.log(compiled)
+
     // check compilation errors/tips
     if (process.env.NODE_ENV !== 'production') {
       if (compiled.errors && compiled.errors.length) {

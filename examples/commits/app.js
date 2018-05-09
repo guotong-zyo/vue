@@ -118,11 +118,22 @@ var App = {
   }
 }
 
-var Dome = Vue.extend({
-    template: '<App/>',
-    components: { App }
+// var Dome = Vue.extend({
+//     template: '<App/>',
+//     components: { App }
+// })
+
+// var demo = new Dome().$mount('#demo')
+
+var dome = new Vue({
+    el: '#demo',
+    template: `
+        <div id="demo1" key="1" ref="xxx">
+            {{1 + 1}} expression
+            <p class="ppp" abc="abc"> text node </p>
+            <p class="ppp"> {{ 2 + 2}} </p>
+            <App/>
+        </div>
+    `,
+    components: {App}
 })
-
-var demo = new Dome().$mount('#demo')
-
-

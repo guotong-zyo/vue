@@ -73,6 +73,7 @@ export function parseHTML (html, options) {
           const commentEnd = html.indexOf('-->')
 
           if (commentEnd >= 0) {
+            //   是否保留注释
             if (options.shouldKeepComment) {
               options.comment(html.substring(4, commentEnd))
             }
@@ -82,6 +83,7 @@ export function parseHTML (html, options) {
         }
 
         // http://en.wikipedia.org/wiki/Conditional_comment#Downlevel-revealed_conditional_comment
+        // conditional_comment
         if (conditionalComment.test(html)) {
           const conditionalEnd = html.indexOf(']>')
 
@@ -194,6 +196,7 @@ export function parseHTML (html, options) {
         attrs: [],
         start: index
       }
+      // 剪切掉已经解析出来的
       advance(start[0].length)
       let end, attr
       while (!(end = html.match(startTagClose)) && (attr = html.match(attribute))) {

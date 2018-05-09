@@ -8745,6 +8745,7 @@ var isNonPhrasingTag = makeMap(
  * http://erik.eae.net/simplehtmlparser/simplehtmlparser.js
  */
 
+// Regular Expressions for parsing tags and attributes
 var attribute = /^\s*([^\s"'<>\/=]+)(?:\s*(=)\s*(?:"([^"]*)"+|'([^']*)'+|([^\s"'=<>`]+)))?/;
 // could use https://www.w3.org/TR/1999/REC-xml-names-19990114/#NT-QName
 // but for Vue templates we can enforce a simple charset
@@ -8805,6 +8806,7 @@ function parseHTML (html, options) {
           var commentEnd = html.indexOf('-->');
 
           if (commentEnd >= 0) {
+            //   是否保留注释
             if (options.shouldKeepComment) {
               options.comment(html.substring(4, commentEnd));
             }
@@ -8814,6 +8816,7 @@ function parseHTML (html, options) {
         }
 
         // http://en.wikipedia.org/wiki/Conditional_comment#Downlevel-revealed_conditional_comment
+        // conditional_comment
         if (conditionalComment.test(html)) {
           var conditionalEnd = html.indexOf(']>');
 
@@ -8926,6 +8929,7 @@ function parseHTML (html, options) {
         attrs: [],
         start: index
       };
+      // 剪切掉已经解析出来的
       advance(start[0].length);
       var end, attr;
       while (!(end = html.match(startTagClose)) && (attr = html.match(attribute))) {
@@ -10718,6 +10722,8 @@ function createCompileToFunctionFn (compile) {
     // compile
     var compiled = compile(template, options);
 
+    console.log(compiled);
+
     // check compilation errors/tips
     {
       if (compiled.errors && compiled.errors.length) {
@@ -10821,11 +10827,14 @@ var createCompiler = createCompilerCreator(function baseCompile (
   template,
   options
 ) {
+  // 解析模板，得到抽象语法树
   var ast = parse(template.trim(), options);
   if (options.optimize !== false) {
+    // 优化AST
     optimize(ast, options);
   }
   var code = generate(ast, options);
+  console.log(code);
   return {
     ast: ast,
     render: code.render,
@@ -10860,10 +10869,12 @@ var idToTemplate = cached(function (id) {
 });
 
 var mount = Vue.prototype.$mount;
+
 Vue.prototype.$mount = function (
   el,
   hydrating
 ) {
+  // 判断el
   el = el && query(el);
 
   /* istanbul ignore if */
@@ -10875,6 +10886,7 @@ Vue.prototype.$mount = function (
   }
 
   var options = this.$options;
+  console.log(options);
   // resolve template/el and convert to render function
   if (!options.render) {
     var template = options.template;
@@ -10908,10 +10920,10 @@ Vue.prototype.$mount = function (
       }
 
       var ref = compileToFunctions(template, {
-        shouldDecodeNewlines: shouldDecodeNewlines,
-        shouldDecodeNewlinesForHref: shouldDecodeNewlinesForHref,
-        delimiters: options.delimiters,
-        comments: options.comments
+        shouldDecodeNewlines: shouldDecodeNewlines,   // 用来统一不同浏览器之间的差异，主要是IE和chrome
+        shouldDecodeNewlinesForHref: shouldDecodeNewlinesForHref,    // 同上
+        delimiters: options.delimiters,     // 分隔符，默认是{{}}
+        comments: options.comments      // 是否模板之中 HTML注释，默认false
       }, this);
       var render = ref.render;
       var staticRenderFns = ref.staticRenderFns;

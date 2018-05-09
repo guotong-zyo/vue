@@ -15,10 +15,12 @@ const idToTemplate = cached(id => {
 })
 
 const mount = Vue.prototype.$mount
+
 Vue.prototype.$mount = function (
   el?: string | Element,
   hydrating?: boolean
 ): Component {
+  // 判断el
   el = el && query(el)
 
   /* istanbul ignore if */
@@ -30,6 +32,7 @@ Vue.prototype.$mount = function (
   }
 
   const options = this.$options
+  console.log(options)
   // resolve template/el and convert to render function
   if (!options.render) {
     let template = options.template
@@ -63,10 +66,10 @@ Vue.prototype.$mount = function (
       }
 
       const { render, staticRenderFns } = compileToFunctions(template, {
-        shouldDecodeNewlines,
-        shouldDecodeNewlinesForHref,
-        delimiters: options.delimiters,
-        comments: options.comments
+        shouldDecodeNewlines,   // 用来统一不同浏览器之间的差异，主要是IE和chrome
+        shouldDecodeNewlinesForHref,    // 同上
+        delimiters: options.delimiters,     // 分隔符，默认是{{}}
+        comments: options.comments      // 是否模板之中 HTML注释，默认false
       }, this)
       options.render = render
       options.staticRenderFns = staticRenderFns
